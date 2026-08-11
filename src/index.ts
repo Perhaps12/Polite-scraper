@@ -1,3 +1,6 @@
+import { downloadFirstCataloguePage } from "./catalogue.js";
+
+// Part 0
 async function checkRobots() {
   const url = "https://books.toscrape.com/robots.txt";
 
@@ -22,3 +25,6 @@ async function checkRobots() {
 }
 
 checkRobots();
+
+//Part 1
+downloadFirstCataloguePage();
