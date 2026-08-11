@@ -19,3 +19,7 @@ export async function fetchWithTimeout(url: string, options: RequestInit = {}): 
     clearTimeout(timeoutId);
   }
 }
+
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

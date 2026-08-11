@@ -1,4 +1,5 @@
-import { downloadFirstCataloguePage } from "./catalogue.js";
+import { downloadCataloguePage } from "./catalogue.js";
+import { loadCachedPage, extractBookLinks, extractNextPageLink} from "./parse.js";
 
 // Part 0
 async function checkRobots() {
@@ -24,7 +25,40 @@ async function checkRobots() {
   }
 }
 
-checkRobots();
+// checkRobots();
 
 //Part 1
-downloadFirstCataloguePage();
+// downloadFirstCataloguePage();
+
+//Part 2
+const MAX_PAGES = 3;
+const START_URL = "https://books.toscrape.com/catalogue/page-1.html";
+
+
+async function main() {
+  let currentUrl: string | null = START_URL;
+  let pageNum = 1;
+  const allLinks: string[] = [];
+
+  while (currentUrl && pageNum <= MAX_PAGES) {
+    const cachePath = `cache/catalogue-page-${pageNum}.html`;
+
+    await downloadCataloguePage(currentUrl, cachePath);
+
+    const $ = await loadCachedPage(cachePath);
+    const links = extractBookLinks($, currentUrl);
+    allLinks.push(...links);
+
+    currentUrl = extractNextPageLink($, currentUrl);
+    pageNum++;
+
+    
+  }
+
+  const uniqueLinks = [...new Set(allLinks)];
+  console.log(`catalogue_pages = ${pageNum - 1}`);
+  console.log(`discovered = ${allLinks.length}`);
+  console.log(`unique urls = ${uniqueLinks.length}`);
+}
+
+main();
