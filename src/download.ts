@@ -3,7 +3,7 @@ import { delay, fetchWithTimeout } from "./http.js";
 
 const REQUEST_DELAY_MS = 500;
 
-export async function downloadCataloguePage(url: string, cachePath: string): Promise<boolean> {
+export async function downloadPage(url: string, cachePath: string): Promise<boolean> {
   // Check cache first
   try {
     await readFile(cachePath, "utf-8");
