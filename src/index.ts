@@ -8,6 +8,9 @@ import {
 } from "./parse.js";
 import type { RawBookRecord } from "./types.js";
 import { writeFile } from "fs/promises";
+import { validateRecords } from "./validate.js";
+import { writeOutput } from "./output.js";
+import { dedupeByProductUrl } from "./transform.js";
 
 const MAX_PAGES = 3;
 const START_URL = "https://books.toscrape.com/catalogue/page-1.html";
@@ -73,6 +76,16 @@ async function main() {
   // Save all records for the next stage
   await writeFile("cache/records.json", JSON.stringify(records, null, 2), "utf-8");
   console.log("Saved cache/records.json");
+
+  const { valid, errors } = validateRecords(records);
+
+  console.log(`Valid records: ${valid.length}`);
+  console.log(`Errors: ${errors.length}`);
+
+  // Apply dedup by product_url as a final safety net before writing
+  const dedupedValid = dedupeByProductUrl(valid);
+
+  await writeOutput(dedupedValid, errors);
 }
 
 main();
